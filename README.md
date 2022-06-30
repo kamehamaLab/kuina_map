@@ -1,6 +1,7 @@
 # kuina_map
 
 This template should help get you started developing with Vue 3 in Vite.
+このgitに変更を加える際はGitflowをお使いください。
 
 ## Recommended IDE Setup
 
