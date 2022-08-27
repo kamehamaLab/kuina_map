@@ -2,7 +2,7 @@
   <splitpanes style="height: 100vh">
     <pane size="78">
       <splitpanes horizontal>
-        <pane size="75"><Map></Map></pane>
+        <pane size="75"><Map :center="center" :markers="markers"></Map></pane>
         <pane size="25">ターミナル</pane>
       </splitpanes>
     </pane>
@@ -55,13 +55,31 @@ export default {
     return {
       tabPosition: 'right',
       devices: [],
+      counter:0,
+      center: { lat: 26.573824362797634, lng: 128.11595295531532 },
+      markers: [
+        {
+          position: {
+            lat: 26.573824362797634, lng: 128.11595295531532
+          },
+        },
+      ],
     }
   },
   mounted(){
     axios
       .get('/api/devices')
       .then(response => (this.devices = response.data));
-  }
+  },
+  methods: {
+    addPin: function () {
+      this.counter += 1;
+      var _lat = 26.573824362797634 + 0.01*this.counter;
+      var newPos = {position:{lat: _lat, lng: 128.11595295531532}};
+      this.center = newPos.position;
+      this.markers.push(newPos);
+    }
+  },
 };
 </script>
 

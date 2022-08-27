@@ -23,35 +23,9 @@
 
 <script>
 export default {
+  props:['markers','center'],
   data() {
     return {
-      center: { lat: 26.573824362797634, lng: 128.11595295531532 },
-      markers: [
-        {
-          position: {
-            lat: 51.093048,
-            lng: 6.84212,
-          },
-        },
-        {
-          position: {
-            lat: 51.198429,
-            lng: 6.69529,
-          },
-        },
-        {
-          position: {
-            lat: 51.165218,
-            lng: 7.067116,
-          },
-        },
-        {
-          position: {
-            lat: 51.09256,
-            lng: 6.84074,
-          },
-        },
-      ],
       mapStyle: {
         disableDefaultUI: true,
         styles: [
