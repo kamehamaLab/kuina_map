@@ -8,12 +8,12 @@
     </pane>
     <pane size="22">
       <el-tabs :tab-position="tabPosition" style="height: 100%">
-        <el-tab-pane style="padding: 0px 0px 0px 10px;" label="Devices">
+        <el-tab-pane  style="padding: 0px 0px 0px 10px;" label="Devices">
           <h3 style="margin-bottom:0px;">Devices</h3>
           <el-divider />
           <div v-for="device in devices" :key="device.id">
             <span>{{ device.name }}</span><br />
-            <table class="deviceDetectionTable">
+            <table class="descTable">
               <tbody>
                 <tr>
                   <td>バッテリー残量</td>
@@ -25,14 +25,37 @@
                 </tr>
                 <tr>
                   <td>ID</td>
-                  <td>{{device.id}}</td>
+                  <td>{{ device.id }}</td>
                 </tr>
               </tbody>
             </table>
             <el-divider />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="Logs">Logs</el-tab-pane>
+        <el-tab-pane style="padding: 0px 0px 0px 10px;" label="Logs">
+          <h3 style="margin-bottom:0px;">Logs</h3>
+          <el-divider />
+          <div v-for="rept in repts" :key="rept.id">
+            <span>{{ moment(rept.created_at) }}</span><br />
+            <table class="descTable">
+              <tbody>
+                <tr>
+                  <td>座標</td>
+                  <td>{{ rept.x_coord }},{{ rept.y_coord }}</td>
+                </tr>
+                <tr>
+                  <td>検出デバイス</td>
+                  <td>{{ rept.device.name }}</td>
+                </tr>
+                <tr>
+                  <td>ID</td>
+                  <td>{{ rept.id }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <el-divider />
+          </div>
+        </el-tab-pane>
       </el-tabs>
     </pane>
   </splitpanes>
@@ -44,6 +67,8 @@ import { affixProps } from "element-plus";
 import { Splitpanes, Pane } from "splitpanes";
 import "splitpanes/dist/splitpanes.css";
 import axios from 'axios'
+import moment from "moment";
+
 
 export default {
   components: {
@@ -55,7 +80,8 @@ export default {
     return {
       tabPosition: 'right',
       devices: [],
-      counter:0,
+      repts: [],
+      counter: 0,
       center: { lat: 26.573824362797634, lng: 128.11595295531532 },
       markers: [
         {
@@ -66,18 +92,24 @@ export default {
       ],
     }
   },
-  mounted(){
+  mounted() {
     axios
       .get('/api/devices')
       .then(response => (this.devices = response.data));
+    axios
+      .get('/api/repts')
+      .then(response => (this.repts = response.data));
   },
   methods: {
     addPin: function () {
       this.counter += 1;
-      var _lat = 26.573824362797634 + 0.01*this.counter;
-      var newPos = {position:{lat: _lat, lng: 128.11595295531532}};
+      var _lat = 26.573824362797634 + 0.01 * this.counter;
+      var newPos = { position: { lat: _lat, lng: 128.11595295531532 } };
       this.center = newPos.position;
       this.markers.push(newPos);
+    },
+    moment(date) {
+      return moment(date).format('YYYY MM DD, HH:mm:ss')
     }
   },
 };
@@ -114,16 +146,26 @@ body {
   transform: scale(1, 2.4);
 }
 
-.deviceDetectionTable {
+.descTable {
   border: none;
   font-size: 0.75rem;
 }
 
-.deviceDetectionTable>tbody>tr>td:nth-child(n+2) {
+.descTable>tbody>tr>td:nth-child(n+2) {
   padding-left: 8px;
   word-break: break-all;
 }
-.deviceDetectionTable>tbody>tr>td:nth-child(1) {
+
+.descTable>tbody>tr>td:nth-child(1) {
   white-space: nowrap;
+}
+.el-tab-pane{
+  overflow-y:scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  height: 100vh;
+}
+.el-tab-pane::-webkit-scrollbar{
+  display:none;
 }
 </style>
