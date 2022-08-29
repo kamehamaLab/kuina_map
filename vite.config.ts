@@ -19,6 +19,10 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      "/cable": {
+        target: "ws://localhost:3001",
+        ws: true,
+      },
     },
   }
 })

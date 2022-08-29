@@ -35,7 +35,7 @@
         <el-tab-pane style="padding: 0px 0px 0px 10px;" label="Logs">
           <h3 style="margin-bottom:0px;">Logs</h3>
           <el-divider />
-          <div v-for="rept in repts" :key="rept.id">
+          <div v-for="rept in repts.slice().reverse()" :key="rept.id">
             <span>{{ moment(rept.created_at) }}</span><br />
             <table class="descTable">
               <tbody>
@@ -90,6 +90,7 @@ export default {
           },
         },
       ],
+      cabinetChannel: null,
     }
   },
   mounted() {
@@ -99,6 +100,16 @@ export default {
     axios
       .get('/api/repts')
       .then(response => (this.repts = response.data));
+    console.log(this.$cable)
+    this.cabinetChannel = this.$cable.subscriptions.create("CabinetChannel",{
+      connected: ()=>{
+        console.log("connected");
+      },
+      received: (data) => {
+        console.log(data);
+        this.repts.push(JSON.parse(data));
+      }
+    })
   },
   methods: {
     addPin: function () {
@@ -110,7 +121,8 @@ export default {
     },
     moment(date) {
       return moment(date).format('YYYY MM DD, HH:mm:ss')
-    }
+    },
+
   },
 };
 </script>

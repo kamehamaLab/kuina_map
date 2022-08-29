@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@fawmi/vue-google-maps": "^0.9.72",
+    "actioncable": "^5.2.8-1",
     "axios": "^0.27.2",
     "element-plus": "^2.2.6",
     "moment": "^2.29.4",
