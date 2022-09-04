@@ -8,7 +8,7 @@
     </pane>
     <pane size="22">
       <el-tabs :tab-position="tabPosition" style="height: 100%">
-        <el-tab-pane  style="padding: 0px 0px 0px 10px;" label="Devices">
+        <el-tab-pane style="padding: 0px 0px 0px 10px;" label="Devices">
           <h3 style="margin-bottom:0px;">Devices</h3>
           <el-divider />
           <div v-for="device in devices" :key="device.id">
@@ -84,11 +84,7 @@ export default {
       counter: 0,
       center: { lat: 26.573824362797634, lng: 128.11595295531532 },
       markers: [
-        {
-          position: {
-            lat: 26.573824362797634, lng: 128.11595295531532
-          },
-        },
+
       ],
       cabinetChannel: null,
     }
@@ -99,23 +95,28 @@ export default {
       .then(response => (this.devices = response.data));
     axios
       .get('/api/repts')
-      .then(response => (this.repts = response.data));
+      .then((responce) => {
+        this.repts = responce.data;
+        for (var rept of responce.data) {
+          this.addPin(rept);
+        }
+      });
     console.log(this.$cable)
-    this.cabinetChannel = this.$cable.subscriptions.create("CabinetChannel",{
-      connected: ()=>{
+    this.cabinetChannel = this.$cable.subscriptions.create("CabinetChannel", {
+      connected: () => {
         console.log("connected");
       },
       received: (data) => {
         console.log(data);
+        this.addPin(JSON.parse(data));
         this.repts.push(JSON.parse(data));
       }
     })
   },
   methods: {
-    addPin: function () {
-      this.counter += 1;
-      var _lat = 26.573824362797634 + 0.01 * this.counter;
-      var newPos = { position: { lat: _lat, lng: 128.11595295531532 } };
+    addPin: function (rept) {
+      console.log(rept)
+      var newPos = { position: { lat: Number(rept.x_coord), lng: Number(rept.y_coord) } };
       this.center = newPos.position;
       this.markers.push(newPos);
     },
@@ -171,13 +172,15 @@ body {
 .descTable>tbody>tr>td:nth-child(1) {
   white-space: nowrap;
 }
-.el-tab-pane{
-  overflow-y:scroll;
+
+.el-tab-pane {
+  overflow-y: scroll;
   -ms-overflow-style: none;
   scrollbar-width: none;
   height: 100vh;
 }
-.el-tab-pane::-webkit-scrollbar{
-  display:none;
+
+.el-tab-pane::-webkit-scrollbar {
+  display: none;
 }
 </style>
